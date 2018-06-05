@@ -2,51 +2,57 @@ import React from "react";
 import axios from "axios";
 
 const DataLoader = (Composed, url, parse) =>
-    class DataLoader extends React.Component {
-        constructor(props) {
-            super(props);
-			const {load, params} = props;
-            this.state = {
-                loading: false,
-				data: []
-            };
+	class DataLoader extends React.Component {
+		constructor(props) {
+			super(props);
+			this.state = {
+				loading: false,
+                error: false,
+				data: [],
+			};
 			this.fetch = this.fetch.bind(this);
-        }
+		}
 
-        componentDidMount() {
+		componentDidMount() {
 			console.log("props:", this.props);
-            //this.fetch();
+			const { load, params } = this.props;
+			if (load) {
+				//this.fetch(params);
+				this.setState({ loading: true });
+				setTimeout(() => this.fetch(params), 1000);
+			}
+		}
+
+		fetch(params) {
 			this.setState({ loading: true });
-			setTimeout(this.fetch, 1000);
-        }
+			axios
+				.get(url)
+				.then(result => {
+					const parsed = parse ? parse(result.data) : result.data;
+					this.setState({
+						data: parsed,
+						loading: false,
+					});
+				})
+				.catch(error => {
+					console.log("!!", error);
+					this.setState({
+						loading: false,
+						loadError: error,
+					});
+				});
+		}
 
-        fetch(params) {
-            this.setState({ loading: true });
-            axios
-                .get(url)
-                .then(result => {
-                    console.log("api call succeed");
-                    const parsed = parse ? parse(result.data) : result.data;
-                    console.log("parsed:", parsed);
-                    this.setState({
-                        data: parsed,
-                        loading: false
-                    });
-                })
-                .catch(error => {
-                    console.log("!!", error);
-                    this.setState({
-                        loading: false,
-                        loadError: error
-                    });
-                });
-        }
-
-        render() {
-            return (
-                <Composed loading={this.state.loading} {...this.state.data} />
-            );
-        }
-    };
+		render() {
+			const { loading, error } = this.state;
+			return (
+				<Composed
+					loading={loading}
+					error={error}
+					{...this.state.data}
+				/>
+			);
+		}
+	};
 
 export default DataLoader;
