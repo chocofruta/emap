@@ -73,11 +73,9 @@ const AsideLoader = DataLoader(
 class App extends React.Component {
     constructor(props) {
         super(props);
-        // this.state = {
-        //     loading: false,
-        //     error: false,
-        //     data: [],
-        // };
+        this.state = {
+            eventsSelected: [],
+        };
         // this.fetch = this.fetch.bind(this);
     }
 

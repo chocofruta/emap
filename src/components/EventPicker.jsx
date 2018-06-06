@@ -7,7 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import EventsTable from "./EventsTable";
+import EventsTable from "./eventsTable/EventsTable";
 
 export default class EventPicker extends React.Component {
 	state = {
@@ -23,17 +23,18 @@ export default class EventPicker extends React.Component {
 	};
 
 	render() {
+		const eventsSelected = this.props.eventsSelected
 		return (
 			<Fragment>
 				<Button onClick={this.handleClickOpen}>
 					Seleccionar eventos
 				</Button>
-				<Dialog open={this.state.open} onClose={this.handleClose}>
+				<Dialog maxWidth="md" open={this.state.open} onClose={this.handleClose}>
 					<DialogTitle id="form-dialog-title">
 						Selección de Eventos
 					</DialogTitle>
 					<DialogContent>
-						<EventsTable />
+						<EventsTable eventsSelected={eventsSelected} />
 					</DialogContent>
 					<DialogActions>
 						<Button onClick={this.handleClose} color="primary">
