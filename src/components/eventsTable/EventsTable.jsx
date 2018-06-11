@@ -1,20 +1,19 @@
 import React from "react";
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TablePagination from "@material-ui/core/TablePagination";
-import TableRow from "@material-ui/core/TableRow";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
+import {
+    Typography,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TablePagination,
+    TableRow,
+    Checkbox
+} from "@material-ui/core";
 import EventsTableHead from "./EventsTableHead";
 import EventsTableToolbar from "./EventsTableToolbar";
+import columnData from "./columnData";
 
 const styles = theme => ({
     root: {
@@ -43,6 +42,12 @@ class EventsTable extends React.Component {
         };
     }
 
+    static getDerivedStateFromProps(props, state) {
+        return {
+            data: props.events ? props.events : state.data
+        };
+    }
+
     handleRequestSort = (event, property) => {
         const orderBy = property;
         let order = "desc";
@@ -65,7 +70,7 @@ class EventsTable extends React.Component {
 
     handleSelectAllClick = (event, checked) => {
         if (checked) {
-            this.setState({ selected: this.state.data.map(n => n.id) });
+            this.setState({ selected: this.state.data.map(n => n.EVENT_ID) });
             return;
         }
         this.setState({ selected: [] });
@@ -139,17 +144,22 @@ class EventsTable extends React.Component {
                                     page * rowsPerPage + rowsPerPage
                                 )
                                 .map(n => {
-                                    const isSelected = this.isSelected(n.id);
+                                    const isSelected = this.isSelected(
+                                        n.EVENT_ID
+                                    );
                                     return (
                                         <TableRow
                                             hover
                                             onClick={event =>
-                                                this.handleClick(event, n.id)
+                                                this.handleClick(
+                                                    event,
+                                                    n.EVENT_ID
+                                                )
                                             }
                                             role="checkbox"
                                             aria-checked={isSelected}
                                             tabIndex={-1}
-                                            key={n.id}
+                                            key={n.EVENT_ID}
                                             selected={isSelected}
                                         >
                                             <TableCell padding="checkbox">
@@ -157,25 +167,13 @@ class EventsTable extends React.Component {
                                                     checked={isSelected}
                                                 />
                                             </TableCell>
-                                            <TableCell
-                                                component="th"
-                                                scope="row"
-                                                padding="none"
-                                            >
-                                                {n.name}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {n.calories}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {n.fat}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {n.carbs}
-                                            </TableCell>
-                                            <TableCell numeric>
-                                                {n.protein}
-                                            </TableCell>
+                                            {columnData.map(c => (
+                                                <TableCell numeric={c.numeric}>
+                                                    <Typography noWrap>
+                                                        {n[c.id]}
+                                                    </Typography>
+                                                </TableCell>
+                                            ))}
                                         </TableRow>
                                     );
                                 })}
@@ -208,7 +206,8 @@ class EventsTable extends React.Component {
 
 EventsTable.propTypes = {
     classes: PropTypes.object.isRequired,
-    events: PropTypes.object.isRequired
+    events: PropTypes.array,
+    handleApplySelection: PropTypes.func
 };
 
 export default withStyles(styles)(EventsTable);

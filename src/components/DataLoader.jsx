@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
 
 const DataLoader = (Composed, url, parse) =>
@@ -14,7 +15,6 @@ const DataLoader = (Composed, url, parse) =>
 		}
 
 		componentDidMount() {
-			console.log("props:", this.props);
 			const { load, params } = this.props;
 			if (load) {
 				//this.fetch(params);
@@ -50,9 +50,15 @@ const DataLoader = (Composed, url, parse) =>
 					loading={loading}
 					error={error}
 					{...this.state.data}
+					{...this.props}
 				/>
 			);
 		}
 	};
+
+DataLoader.propTypes = {
+    load: PropTypes.bool,
+	params: PropTypes.array,
+};
 
 export default DataLoader;

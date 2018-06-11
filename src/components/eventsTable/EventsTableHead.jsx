@@ -1,33 +1,15 @@
 import React from "react";
-import classNames from "classnames";
 import PropTypes from "prop-types";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Tooltip from "@material-ui/core/Tooltip";
-import Checkbox from "@material-ui/core/Checkbox";
-
-const columnData = [
-    { id: "id", numeric: true, label: "ID Evento" },
-    { id: "type", numeric: false, label: "Tipo" },
-    { id: "state", numeric: false, label: "Estado" },
-    { id: "eventdate", numeric: false, label: "Fecha Evento" },
-    { id: "solvedate", numeric: false, label: "Fecha Solución" },
-    { id: "enddate", numeric: false, label: "Fecha Final" },
-    { id: "escdate", numeric: false, label: "Fecha Escalamiento" },
-    { id: "service", numeric: false, label: "Servicio" },
-    { id: "system", numeric: false, label: "Sistema" },
-    { id: "subsys", numeric: false, label: "Subsistema" },
-    { id: "totalp", numeric: true, label: "Total Pot." },
-    { id: "problem", numeric: false, label: "Problema" },
-    { id: "severity", numeric: true, label: "Criticidad" },
-    { id: "zona", numeric: false, label: "Zona" },
-    { id: "localidad", numeric: false, label: "Localidad" },
-    { id: "nodo", numeric: false, label: "Nodo" },
-    { id: "cuadrante", numeric: false, label: "Cuadrante" },
-    { id: "georef", numeric: false, label: "Geo Ref." }
-];
+import {
+    Typography,
+    Tooltip,
+    Checkbox,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableSortLabel
+} from "@material-ui/core";
+import columnData from "./columnData";
 
 class EventsTableHead extends React.Component {
     createSortHandler = property => event => {
@@ -83,7 +65,9 @@ class EventsTableHead extends React.Component {
                                             column.id
                                         )}
                                     >
-                                        {column.label}
+                                        <Typography noWrap>
+                                            {column.label}
+                                        </Typography>
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
