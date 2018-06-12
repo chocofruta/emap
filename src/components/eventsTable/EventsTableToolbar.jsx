@@ -14,18 +14,18 @@ const toolbarStyles = theme => ({
     highlight:
         theme.palette.type === "light"
             ? {
-                  color: theme.palette.secondary.main,
-                  backgroundColor: lighten(theme.palette.secondary.light, 0.85)
+                  color: theme.palette.primary.main,
+                  backgroundColor: lighten(theme.palette.primary.light, 0.3)
               }
             : {
                   color: theme.palette.text.primary,
-                  backgroundColor: theme.palette.secondary.dark
+                  backgroundColor: theme.palette.primary.dark
               },
     spacer: {
         flex: "1 1 100%"
     },
     actions: {
-        color: theme.palette.text.secondary
+        color: theme.palette.text.primary
     },
     title: {
         flex: "0 0 auto"
@@ -44,7 +44,7 @@ let EventsTableToolbar = props => {
             <div className={classes.title}>
                 {numSelected > 0 ? (
                     <Typography color="inherit" variant="subheading">
-                        {numSelected} selected
+                        {numSelected} eventos seleccionados
                     </Typography>
                 ) : (
                     <Typography variant="title" id="tableTitle">

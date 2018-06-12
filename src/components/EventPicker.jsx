@@ -1,5 +1,6 @@
 import React from "react";
 import { Fragment } from "react";
+import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -19,10 +20,22 @@ const EventsLoader = DataLoader(
     }
 );
 
-export default class EventPicker extends React.Component {
-    state = {
-        open: false
-    };
+class EventPicker extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false,
+            eventsForSelect: props.eventsSelected
+        };
+
+        this.handleSelection = this.handleSelection.bind(this);
+    }
+
+    handleSelection(eid) {
+        this.setState({
+            eventsForSelect: eid
+        });
+    }
 
     handleClickOpen = () => {
         this.setState({ open: true });
@@ -33,21 +46,22 @@ export default class EventPicker extends React.Component {
     };
 
     handleAccept = () => {
+        this.props.handleApplySelection(this.state.eventsForSelect);
         this.setState({ open: false });
     };
 
-    handleApplySelection = (selected) => {
-        console.log("EventPicker", "handleApplySelection()");
-        this.setState({ events: [] });
-    };
-
     render() {
-        const eventsSelected = this.props.eventsSelected;
+        const { eventsSelected } = this.props;
+        const button = eventsSelected.length ? (
+            <Button color="primary" onClick={this.handleClickOpen}>
+                {eventsSelected.length} eventos seleccionados
+            </Button>
+        ) : (
+            <Button onClick={this.handleClickOpen}>Seleccionar eventos</Button>
+        );
         return (
             <Fragment>
-                <Button onClick={this.handleClickOpen}>
-                    Seleccionar eventos
-                </Button>
+                {button}
                 <Dialog
                     maxWidth="md"
                     open={this.state.open}
@@ -58,8 +72,8 @@ export default class EventPicker extends React.Component {
                     </DialogTitle>
                     <DialogContent>
                         <EventsLoader
-                            eventsSelected={eventsSelected}
-                            handleApplySelection={this.handleApplySelection}
+                            eventsForSelect={this.state.eventsForSelect}
+                            handleSelection={this.handleSelection}
                             load={true}
                         />
                     </DialogContent>
@@ -76,3 +90,9 @@ export default class EventPicker extends React.Component {
         );
     }
 }
+
+EventPicker.propTypes = {
+    eventsSelected: PropTypes.array.isRequired
+};
+
+export default EventPicker;

@@ -28,14 +28,14 @@ const styles = theme => ({
     }
 });
 
-class EventsTable extends React.Component {
+class EventsTable extends React.Component
+{
     constructor(props) {
         super(props);
 
         this.state = {
             order: "asc",
             orderBy: "id",
-            selected: [],
             data: props.events || [],
             page: 0,
             rowsPerPage: 5
@@ -69,15 +69,13 @@ class EventsTable extends React.Component {
     };
 
     handleSelectAllClick = (event, checked) => {
-        if (checked) {
-            this.setState({ selected: this.state.data.map(n => n.EVENT_ID) });
-            return;
-        }
-        this.setState({ selected: [] });
+		const handleSelection = this.props.handleSelection;
+		handleSelection(checked ? this.state.data.map(n => n.EVENT_ID) : []);
     };
 
     handleClick = (event, id) => {
-        const { selected } = this.state;
+        const selected = this.props.eventsForSelect;
+		const handleSelection = this.props.handleSelection;
         const selectedIndex = selected.indexOf(id);
         let newSelected = [];
 
@@ -94,7 +92,7 @@ class EventsTable extends React.Component {
             );
         }
 
-        this.setState({ selected: newSelected });
+		handleSelection(newSelected);
     };
 
     handleChangePage = (event, page) => {
@@ -105,15 +103,14 @@ class EventsTable extends React.Component {
         this.setState({ rowsPerPage: event.target.value });
     };
 
-    isSelected = id => this.state.selected.indexOf(id) !== -1;
+    isSelected = id => this.props.eventsForSelect.indexOf(id) !== -1;
 
     render() {
-        const { classes } = this.props;
+        const { classes, eventsForSelect } = this.props;
         const {
             data,
             order,
             orderBy,
-            selected,
             rowsPerPage,
             page
         } = this.state;
@@ -123,14 +120,14 @@ class EventsTable extends React.Component {
 
         return (
             <Paper className={classes.root}>
-                <EventsTableToolbar numSelected={selected.length} />
+                <EventsTableToolbar numSelected={eventsForSelect.length} />
                 <div className={classes.tableWrapper}>
                     <Table
                         className={classes.table}
                         aria-labelledby="tableTitle"
                     >
                         <EventsTableHead
-                            numSelected={selected.length}
+                            numSelected={eventsForSelect.length}
                             order={order}
                             orderBy={orderBy}
                             onSelectAllClick={this.handleSelectAllClick}
@@ -168,7 +165,10 @@ class EventsTable extends React.Component {
                                                 />
                                             </TableCell>
                                             {columnData.map(c => (
-                                                <TableCell numeric={c.numeric}>
+                                                <TableCell
+                                                    numeric={c.numeric}
+                                                    key={c.id}
+                                                >
                                                     <Typography noWrap>
                                                         {n[c.id]}
                                                     </Typography>
@@ -206,8 +206,9 @@ class EventsTable extends React.Component {
 
 EventsTable.propTypes = {
     classes: PropTypes.object.isRequired,
-    events: PropTypes.array,
-    handleApplySelection: PropTypes.func
+	eventsForSelect: PropTypes.array.isRequired,
+	handleSelection: PropTypes.func.isRequired,
+    events: PropTypes.array
 };
 
 export default withStyles(styles)(EventsTable);
