@@ -28,8 +28,7 @@ const styles = theme => ({
     }
 });
 
-class EventsTable extends React.Component
-{
+class EventsTable extends React.Component {
     constructor(props) {
         super(props);
 
@@ -69,13 +68,13 @@ class EventsTable extends React.Component
     };
 
     handleSelectAllClick = (event, checked) => {
-		const handleSelection = this.props.handleSelection;
-		handleSelection(checked ? this.state.data.map(n => n.EVENT_ID) : []);
+        const handleSelection = this.props.handleSelection;
+        handleSelection(checked ? this.state.data.map(n => n.EVENT_ID) : []);
     };
 
     handleClick = (event, id) => {
         const selected = this.props.eventsForSelect;
-		const handleSelection = this.props.handleSelection;
+        const handleSelection = this.props.handleSelection;
         const selectedIndex = selected.indexOf(id);
         let newSelected = [];
 
@@ -92,7 +91,7 @@ class EventsTable extends React.Component
             );
         }
 
-		handleSelection(newSelected);
+        handleSelection(newSelected);
     };
 
     handleChangePage = (event, page) => {
@@ -106,14 +105,8 @@ class EventsTable extends React.Component
     isSelected = id => this.props.eventsForSelect.indexOf(id) !== -1;
 
     render() {
-        const { classes, eventsForSelect } = this.props;
-        const {
-            data,
-            order,
-            orderBy,
-            rowsPerPage,
-            page
-        } = this.state;
+        const { classes, eventsForSelect, loading } = this.props;
+        const { data, order, orderBy, rowsPerPage, page } = this.state;
         const emptyRows =
             rowsPerPage -
             Math.min(rowsPerPage, data.length - page * rowsPerPage);
@@ -135,7 +128,7 @@ class EventsTable extends React.Component
                             rowCount={data.length}
                         />
                         <TableBody>
-                            {data
+                            {data && data
                                 .slice(
                                     page * rowsPerPage,
                                     page * rowsPerPage + rowsPerPage
@@ -206,8 +199,8 @@ class EventsTable extends React.Component
 
 EventsTable.propTypes = {
     classes: PropTypes.object.isRequired,
-	eventsForSelect: PropTypes.array.isRequired,
-	handleSelection: PropTypes.func.isRequired,
+    eventsForSelect: PropTypes.array.isRequired,
+    handleSelection: PropTypes.func.isRequired,
     events: PropTypes.array
 };
 

@@ -25,48 +25,45 @@ const styles = theme => ({
 
 const DataSectionLoader = DataLoader(
     DataSection,
-    "https://ipapi.co/200.83.2.5/json/",
+    "http://desannoc.vtr.cl/pmenares/emap/controller.php?mod=geo",
+    "post",
     data => {
-        return {
-            markers: [
-                {
-                    lat: data.latitude,
-                    lng: data.longitude
-                }
-            ]
-        };
+        if (typeof data === "object") {
+            return {
+                markers: data.map(c => ({
+                    lat: Number(c.LAT),
+                    lng: Number(c.LNG)
+                }))
+            };
+		} else {
+			console.log("!!", "not an object type");
+			return { error: data };
+		}
     }
 );
-
-// const DataSectionLoader = DataLoader(
-//     DataSection,
-//     "http://desannoc.vtr.cl/pmenares/emap/controller.php?mod=test",
-//     data => {
-//         return {
-//             markers: data.map(c => ({ lat: c.lat, lng: c.lng }))
-//         };
-//     }
-// );
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+			load: false,
             eventsSelected: []
         };
-        // this.fetch = this.fetch.bind(this);
+
         this.handleApplySelection = this.handleApplySelection.bind(this);
     }
 
     handleApplySelection(eid) {
         this.setState({
+			load: true,
             eventsSelected: eid
         });
     }
 
     render() {
         const { classes } = this.props;
-        const { eventsSelected } = this.state;
+        const { load, eventsSelected } = this.state;
+        console.log("eventsSelected", eventsSelected);
         return (
             <div className={classes.app}>
                 <CssBaseline />
@@ -80,7 +77,10 @@ class App extends React.Component {
                             />
                         </Grid>
                         <Grid item xs className={classes.gridItemDataSection}>
-                            <DataSectionLoader load={true} />
+                            <DataSectionLoader
+                                load={load}
+                                params={{ eid: eventsSelected }}
+                            />
                         </Grid>
                     </Grid>
                 </Paper>

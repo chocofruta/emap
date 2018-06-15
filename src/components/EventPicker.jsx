@@ -8,15 +8,22 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import EventsTable from "./eventsTable/EventsTable";
 import DataLoader from "./DataLoader";
+import moment from "moment";
 
 const EventsLoader = DataLoader(
     EventsTable,
     "http://desannoc.vtr.cl/pmenares/emap/controller.php?mod=fen",
+    "get",
     data => {
-        return {
-            events: data || [],
-            eventsType: "fen"
-        };
+		if (typeof data === "object") {
+	        return {
+	            events: data || [],
+	            eventsType: "fen"
+	        };
+		} else {
+			console.log("!!", "not an object type");
+			return { error: data };
+		}
     }
 );
 
@@ -25,9 +32,12 @@ class EventPicker extends React.Component {
         super(props);
         this.state = {
             open: false,
-            eventsForSelect: props.eventsSelected
+            eventsForSelect: props.eventsSelected,
+            ffin: moment(),
+            fini: moment().add(-1, "day")
         };
 
+        this.datefmt = "YYYY-MM-DD HH:mm";
         this.handleSelection = this.handleSelection.bind(this);
     }
 
@@ -75,6 +85,10 @@ class EventPicker extends React.Component {
                             eventsForSelect={this.state.eventsForSelect}
                             handleSelection={this.handleSelection}
                             load={true}
+                            params={{
+                                fini: this.state.fini.format(this.datefmt),
+                                ffin: this.state.ffin.format(this.datefmt)
+                            }}
                         />
                     </DialogContent>
                     <DialogActions>

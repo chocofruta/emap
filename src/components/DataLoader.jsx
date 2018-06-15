@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 
-const DataLoader = (Composed, url, parse) =>
+const DataLoader = (Composed, url, method, parse) =>
 	class DataLoader extends React.Component {
 		constructor(props) {
 			super(props);
@@ -17,28 +17,40 @@ const DataLoader = (Composed, url, parse) =>
 		componentDidMount() {
 			const { load, params } = this.props;
 			if (load) {
-				//this.fetch(params);
-				this.setState({ loading: true });
-				setTimeout(() => this.fetch(params), 1000);
+				this.fetch(params);
+				//this.setState({ loading: true });
+				//setTimeout(() => this.fetch(params), 1000);
+			}
+		}
+
+		componentDidUpdate(prevProps) {
+			const { load, params } = this.props;
+			if (load && params !== prevProps.params) {
+				this.fetch(params);
 			}
 		}
 
 		fetch(params) {
 			this.setState({ loading: true });
-			axios
-				.get(url)
+			axios({
+				method: method,
+				url: url,
+				params: params
+			})
 				.then(result => {
 					const parsed = parse ? parse(result.data) : result.data;
 					this.setState({
 						data: parsed,
 						loading: false,
+						load: false,
 					});
 				})
 				.catch(error => {
 					console.log("!!", error);
 					this.setState({
-						loading: false,
 						loadError: error,
+						loading: false,
+						load: false
 					});
 				});
 		}

@@ -8,7 +8,7 @@ const options = {
     strokeWeight: 1,
     fillColor: "#FF0000",
     fillOpacity: 0.5,
-    radius: 700
+    radius: 10
 };
 
 const RedCircle = props => {
