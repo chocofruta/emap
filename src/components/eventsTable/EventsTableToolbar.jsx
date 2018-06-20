@@ -1,4 +1,5 @@
 import React from "react";
+import { Fragment } from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -28,12 +29,14 @@ const toolbarStyles = theme => ({
         color: theme.palette.text.primary
     },
     title: {
+		display: "flex",
         flex: "0 0 auto"
     }
 });
 
-let EventsTableToolbar = props => {
-    const { numSelected, classes } = props;
+const EventsTableToolbar = props => {
+    const { numSelected, ffin, fini, classes } = props;
+    const datefmt = "YYYY-MM-DD HH:mm";
 
     return (
         <Toolbar
@@ -47,9 +50,12 @@ let EventsTableToolbar = props => {
                         {numSelected} eventos seleccionados
                     </Typography>
                 ) : (
-                    <Typography variant="title" id="tableTitle">
-                        FEN
-                    </Typography>
+                    <Fragment>
+                        <Typography variant="title">FEN</Typography>
+                        <Typography variant="subheading" style={{fontSize: ".9em", marginLeft: 10}}>
+                            {fini.format(datefmt)} - {ffin.format(datefmt)}
+                        </Typography>
+                    </Fragment>
                 )}
             </div>
             <div className={classes.spacer} />

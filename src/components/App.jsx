@@ -53,10 +53,10 @@ class App extends React.Component {
         this.handleApplySelection = this.handleApplySelection.bind(this);
     }
 
-    handleApplySelection(eid) {
+    handleApplySelection(e) {
         this.setState({
 			load: true,
-            eventsSelected: eid
+            eventsSelected: e
         });
     }
 

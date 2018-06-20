@@ -41,9 +41,9 @@ class EventPicker extends React.Component {
         this.handleSelection = this.handleSelection.bind(this);
     }
 
-    handleSelection(eid) {
+    handleSelection(e) {
         this.setState({
-            eventsForSelect: eid
+            eventsForSelect: e
         });
     }
 
@@ -85,9 +85,11 @@ class EventPicker extends React.Component {
                             eventsForSelect={this.state.eventsForSelect}
                             handleSelection={this.handleSelection}
                             load={true}
+							ffin={this.state.ffin}
+							fini={this.state.fini}
                             params={{
-                                fini: this.state.fini.format(this.datefmt),
-                                ffin: this.state.ffin.format(this.datefmt)
+								ffin: this.state.ffin.format(this.datefmt),
+                                fini: this.state.fini.format(this.datefmt)
                             }}
                         />
                     </DialogContent>
@@ -106,7 +108,8 @@ class EventPicker extends React.Component {
 }
 
 EventPicker.propTypes = {
-    eventsSelected: PropTypes.array.isRequired
+    eventsSelected: PropTypes.array.isRequired,
+	handleApplySelection: PropTypes.func.isRequired
 };
 
 export default EventPicker;

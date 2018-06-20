@@ -1,19 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import {
-    Typography,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TablePagination,
-    TableRow,
-    Checkbox
-} from "@material-ui/core";
+import { Paper, Table, TablePagination } from "@material-ui/core";
 import EventsTableHead from "./EventsTableHead";
 import EventsTableToolbar from "./EventsTableToolbar";
-import columnData from "./columnData";
+import EventsTableBody from "./EventsTableBody";
 
 const styles = theme => ({
     root: {
@@ -105,15 +96,20 @@ class EventsTable extends React.Component {
     isSelected = id => this.props.eventsForSelect.indexOf(id) !== -1;
 
     render() {
-        const { classes, eventsForSelect, loading } = this.props;
+        const { classes, eventsForSelect, ffin, fini, loading } = this.props;
         const { data, order, orderBy, rowsPerPage, page } = this.state;
-        const emptyRows =
-            rowsPerPage -
-            Math.min(rowsPerPage, data.length - page * rowsPerPage);
+        const pageData = data.slice(
+            page * rowsPerPage,
+            page * rowsPerPage + rowsPerPage
+        );
 
         return (
             <Paper className={classes.root}>
-                <EventsTableToolbar numSelected={eventsForSelect.length} />
+                <EventsTableToolbar
+                    numSelected={eventsForSelect.length}
+                    ffin={ffin}
+                    fini={fini}
+                />
                 <div className={classes.tableWrapper}>
                     <Table
                         className={classes.table}
@@ -127,55 +123,12 @@ class EventsTable extends React.Component {
                             onRequestSort={this.handleRequestSort}
                             rowCount={data.length}
                         />
-                        <TableBody>
-                            {data && data
-                                .slice(
-                                    page * rowsPerPage,
-                                    page * rowsPerPage + rowsPerPage
-                                )
-                                .map(n => {
-                                    const isSelected = this.isSelected(
-                                        n.EVENT_ID
-                                    );
-                                    return (
-                                        <TableRow
-                                            hover
-                                            onClick={event =>
-                                                this.handleClick(
-                                                    event,
-                                                    n.EVENT_ID
-                                                )
-                                            }
-                                            role="checkbox"
-                                            aria-checked={isSelected}
-                                            tabIndex={-1}
-                                            key={n.EVENT_ID}
-                                            selected={isSelected}
-                                        >
-                                            <TableCell padding="checkbox">
-                                                <Checkbox
-                                                    checked={isSelected}
-                                                />
-                                            </TableCell>
-                                            {columnData.map(c => (
-                                                <TableCell
-                                                    numeric={c.numeric}
-                                                    key={c.id}
-                                                >
-                                                    <Typography noWrap>
-                                                        {n[c.id]}
-                                                    </Typography>
-                                                </TableCell>
-                                            ))}
-                                        </TableRow>
-                                    );
-                                })}
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: 49 * emptyRows }}>
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
+                        <EventsTableBody
+                            pageData={pageData}
+                            isSelected={this.isSelected}
+                            handleClick={this.handleClick}
+                            loading={loading}
+                        />
                     </Table>
                 </div>
                 <TablePagination
