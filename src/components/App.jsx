@@ -35,10 +35,10 @@ const DataSectionLoader = DataLoader(
                     lng: Number(c.LNG)
                 }))
             };
-		} else {
-			console.log("!!", "not an object type");
-			return { error: data };
-		}
+        } else {
+            console.log("!!", "not an object type");
+            return { error: data };
+        }
     }
 );
 
@@ -46,7 +46,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-			load: false,
+            loadMarkers: false,
             eventsSelected: []
         };
 
@@ -55,15 +55,15 @@ class App extends React.Component {
 
     handleApplySelection(e) {
         this.setState({
-			load: true,
+            loadMarkers: true,
             eventsSelected: e
         });
     }
 
     render() {
         const { classes } = this.props;
-        const { load, eventsSelected } = this.state;
-        console.log("eventsSelected", eventsSelected);
+        const { loadMarkers, eventsSelected } = this.state;
+
         return (
             <div className={classes.app}>
                 <CssBaseline />
@@ -78,8 +78,10 @@ class App extends React.Component {
                         </Grid>
                         <Grid item xs className={classes.gridItemDataSection}>
                             <DataSectionLoader
-                                load={load}
-                                params={{ eid: eventsSelected }}
+                                load={loadMarkers}
+                                params={{
+                                    eid: eventsSelected.map(e => e.EVENT_ID)
+                                }}
                             />
                         </Grid>
                     </Grid>

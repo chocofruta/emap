@@ -3,9 +3,19 @@ import { Fragment } from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { Toolbar, Typography, Tooltip, IconButton } from "@material-ui/core";
+import {
+    Toolbar,
+    Typography,
+    Tooltip,
+    IconButton,
+    FormControl,
+    InputLabel,
+    Input,
+    InputAdornment
+} from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteIcon from "@material-ui/icons/Delete";
+import SearchIcon from "@material-ui/icons/Search";
 import { lighten } from "@material-ui/core/styles/colorManipulator";
 
 const toolbarStyles = theme => ({
@@ -29,13 +39,43 @@ const toolbarStyles = theme => ({
         color: theme.palette.text.primary
     },
     title: {
-		display: "flex",
+        display: "flex",
         flex: "0 0 auto"
     }
 });
 
+const SearchBar = props => {
+    const { value, handleSearch } = props;
+
+    return (
+        <FormControl>
+            <InputLabel htmlFor="search-input">Buscar</InputLabel>
+            <Input
+                id="search-input"
+                type="text"
+                value={value}
+                onChange={handleSearch}
+                endAdornment={
+                    <InputAdornment position="end">
+                        <IconButton>
+                            <SearchIcon />
+                        </IconButton>
+                    </InputAdornment>
+                }
+            />
+        </FormControl>
+    );
+};
+
 const EventsTableToolbar = props => {
-    const { numSelected, ffin, fini, classes } = props;
+    const {
+        numSelected,
+        ffin,
+        fini,
+        searchValue,
+        handleSearch,
+        classes
+    } = props;
     const datefmt = "YYYY-MM-DD HH:mm";
 
     return (
@@ -51,10 +91,19 @@ const EventsTableToolbar = props => {
                     </Typography>
                 ) : (
                     <Fragment>
+					{/*
                         <Typography variant="title">FEN</Typography>
-                        <Typography variant="subheading" style={{fontSize: ".9em", marginLeft: 10}}>
+                        <Typography
+                            variant="subheading"
+                            style={{ fontSize: ".9em", marginLeft: 10 }}
+                        >
                             {fini.format(datefmt)} - {ffin.format(datefmt)}
                         </Typography>
+					*/}
+                        <SearchBar
+                            value={searchValue}
+                            handleSearch={handleSearch}
+                        />
                     </Fragment>
                 )}
             </div>

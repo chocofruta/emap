@@ -34,7 +34,7 @@ class EventPicker extends React.Component {
             open: false,
             eventsForSelect: props.eventsSelected,
             ffin: moment(),
-            fini: moment().add(-1, "day")
+            fini: moment().add(-12, "hour")
         };
 
         this.datefmt = "YYYY-MM-DD HH:mm";

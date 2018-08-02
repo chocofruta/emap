@@ -4,12 +4,14 @@ import { withStyles } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
 import FilterList from "@material-ui/icons/FilterList";
 import EventPicker from "../EventPicker";
+import SelectionDisplay from "../SelectionDisplay";
 import FetchLocations from "../FetchLocations";
 
 const styles = theme => ({
     aside: {
         display: "flex",
         flexDirection: "column",
+		height: "100%",
         alignItems: "center",
         padding: theme.spacing.unit * 2,
         color: theme.palette.text.secondary
@@ -33,6 +35,7 @@ const Aside = props => {
                 eventsSelected={eventsSelected}
                 handleApplySelection={handleApplySelection}
             />
+			<SelectionDisplay eventsSelected={eventsSelected} />
             <FetchLocations />
         </aside>
     );

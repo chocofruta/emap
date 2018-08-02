@@ -31,7 +31,7 @@ const EventsTableBody = props => {
                 return (
                     <TableRow
                         hover
-                        onClick={event => handleClick(event, n.EVENT_ID)}
+                        onClick={event => handleClick(event, n)}
                         role="checkbox"
                         aria-checked={selected}
                         tabIndex={-1}

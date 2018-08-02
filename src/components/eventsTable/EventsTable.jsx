@@ -28,7 +28,8 @@ class EventsTable extends React.Component {
             orderBy: "id",
             data: props.events || [],
             page: 0,
-            rowsPerPage: 5
+            rowsPerPage: 5,
+            searchValue: ""
         };
     }
 
@@ -60,25 +61,24 @@ class EventsTable extends React.Component {
 
     handleSelectAllClick = (event, checked) => {
         const handleSelection = this.props.handleSelection;
-        handleSelection(checked ? this.state.data.map(n => n.EVENT_ID) : []);
+        handleSelection(checked ? this.state.data.filter(d => !d.HIDDEN) : []);
     };
 
-    handleClick = (event, id) => {
-        const selected = this.props.eventsForSelect;
-        const handleSelection = this.props.handleSelection;
-        const selectedIndex = selected.indexOf(id);
+    handleClick = (event, selected) => {
+        const { eventsForSelect, handleSelection } = this.props;
+        const index = eventsForSelect.findIndex(e => e.EVENT_ID === selected.EVENT_ID);
         let newSelected = [];
 
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
+        if (index === -1) {
+            newSelected = newSelected.concat(eventsForSelect, selected);
+        } else if (index === 0) {
+            newSelected = newSelected.concat(eventsForSelect.slice(1));
+        } else if (index === eventsForSelect.length - 1) {
+            newSelected = newSelected.concat(eventsForSelect.slice(0, -1));
+        } else if (index > 0) {
             newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1)
+                eventsForSelect.slice(0, index),
+                eventsForSelect.slice(index + 1)
             );
         }
 
@@ -93,12 +93,45 @@ class EventsTable extends React.Component {
         this.setState({ rowsPerPage: event.target.value });
     };
 
-    isSelected = id => this.props.eventsForSelect.indexOf(id) !== -1;
+    handleSearch = event => {
+        const value = event.target.value.toLowerCase();
+        this.setState((prevState, props) => ({
+            searchValue: value,
+            data: prevState.data.map(d => {
+                for (let k in d) {
+                    if (
+                        d[k] &&
+                        d[k]
+                            .toString()
+                            .toLowerCase()
+                            .indexOf(value) > -1
+                    ) {
+                        d.HIDDEN = false;
+                        return d;
+                    }
+                }
+                d.HIDDEN = true;
+                return d;
+            })
+        }));
+    };
+
+    isSelected = id => this.props.eventsForSelect.findIndex(e => e.EVENT_ID === id) > -1;
 
     render() {
         const { classes, eventsForSelect, ffin, fini, loading } = this.props;
-        const { data, order, orderBy, rowsPerPage, page } = this.state;
-        const pageData = data.slice(
+        const {
+            data,
+            order,
+            orderBy,
+            rowsPerPage,
+            page,
+            searchValue
+        } = this.state;
+
+        const filteredData = data.filter(d => !d.HIDDEN);
+        const dataCount = filteredData.length;
+        const pageData = filteredData.slice(
             page * rowsPerPage,
             page * rowsPerPage + rowsPerPage
         );
@@ -109,6 +142,8 @@ class EventsTable extends React.Component {
                     numSelected={eventsForSelect.length}
                     ffin={ffin}
                     fini={fini}
+                    searchValue={searchValue}
+                    handleSearch={this.handleSearch}
                 />
                 <div className={classes.tableWrapper}>
                     <Table
@@ -121,7 +156,7 @@ class EventsTable extends React.Component {
                             orderBy={orderBy}
                             onSelectAllClick={this.handleSelectAllClick}
                             onRequestSort={this.handleRequestSort}
-                            rowCount={data.length}
+                            rowCount={dataCount}
                         />
                         <EventsTableBody
                             pageData={pageData}
@@ -133,7 +168,7 @@ class EventsTable extends React.Component {
                 </div>
                 <TablePagination
                     component="div"
-                    count={data.length}
+                    count={dataCount}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     backIconButtonProps={{
